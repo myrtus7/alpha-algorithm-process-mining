@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Environnements virtuels
+.venv/
+venv/
+env/
+.env
+
+# Tests / outils
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+*.code-workspace
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
