@@ -26,9 +26,9 @@ htmlcov/
 
 # VS Code
 .vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
-!.vscode/launch.json
+.vscode/settings.json
+.vscode/extensions.json
+.vscode/launch.json
 *.code-workspace
 
 # Linux
