@@ -1,7 +1,9 @@
 import pytest
 from alpha_miner import (define_all_events,
     define_all_possible_end_events,
-    define_all_possible_start_events)
+    define_all_possible_start_events,
+    _get_all_causalities,
+    _footprint_matrix)
 
 LOG = {
     ('a', 'b', 'c', 'd'),
@@ -45,3 +47,55 @@ def test_define_all_possible_start_events(log, expected):
 ])
 def test_define_all_possible_end_events(log, expected):
     assert define_all_possible_end_events(log) == expected
+
+@pytest.mark.parametrize("log,expected", [
+    (LOG, {'a':{'b','e'}, 'b':{'c'}, 'c':{'d','e'}, 'e':{'c','d'}}),
+    ({('a',)}, {}),
+    ({('a',), ('a', 'b')}, {'a':{'b'}}),
+])
+def test_get_all_causalities(log, expected):
+    assert _get_all_causalities(log) == expected
+
+LOG_PARALLEL = {('a', 'b', 'c', 'd'), ('a', 'c', 'b', 'd')}
+
+@pytest.mark.parametrize("log, expected", [
+    ({('a',)}, [['#']]),
+    # events sorted: a, b
+    ({('a',), ('a', 'b')}, [
+        ['#',  '->'],
+        ['<-', '#' ],
+    ]),
+    # events sorted: a, b, c, d, e
+    (LOG, [
+        ['#',  '->', '#',  '#',  '->'],
+        ['<-', '#',  '->', '#',  '#' ],
+        ['#',  '<-', '#',  '->', '||'],
+        ['#',  '#',  '<-', '#',  '<-'],
+        ['<-', '#',  '||', '->', '#' ],
+    ]),
+    # events sorted: a, b, c, e
+    (LOG_DIFFERENT_START_END, [
+        ['#',  '->', '#',  '#' ],
+        ['<-', '#',  '->', '#' ],
+        ['#',  '<-', '#',  '->'],
+        ['#',  '#',  '<-', '#' ],
+    ]),
+    # events sorted: a, b, c, d
+    (LOG_PARALLEL, [
+        ['#',  '->', '->', '#' ],
+        ['<-', '#',  '||', '->'],
+        ['<-', '||', '#',  '->'],
+        ['#',  '<-', '<-', '#' ],
+    ]),
+])
+def test_footprint_matrix(log, expected):
+    assert _footprint_matrix(log) == expected
+
+@pytest.mark.parametrize("invalid_log", [
+    None,
+    set(),
+    {()},
+])
+def test_footprint_matrix_for_invalid_input(invalid_log):
+    with pytest.raises(ValueError):
+        _footprint_matrix(invalid_log)
