@@ -1,14 +1,11 @@
 from collections import defaultdict
 
 def alpha(log: set[set[str]]):
-    pass
+    _validate_log(log)
 
 def define_all_events(log: set[tuple[str]]) -> set[str] :
     # using a tuple to keep order and repetition of activities
     # could also do a one-liner with return set().union(*log) but both are O(n)
-
-    _validate_log(log)
-
     t_l = set()
     for trace in log :
         for activity in trace:
@@ -16,23 +13,18 @@ def define_all_events(log: set[tuple[str]]) -> set[str] :
     return t_l
 
 def define_all_possible_start_events(log: set[tuple[str]]) -> set[str] :
-    _validate_log(log)
-
     t_i = set()
     for trace in log:
         t_i.add(trace[0])
     return t_i
 
 def define_all_possible_end_events(log: set[tuple[str]]) -> set[str] :
-    _validate_log(log)
-
     t_o = set()
     for trace in log:
         t_o.add(trace[len(trace)-1])
     return t_o
 
-def _footprint_matrix(log: set[tuple[str]]) -> [[str]]:
-    events = sorted(list(define_all_events(log)))
+def _footprint_matrix(log: set[tuple[str]], events: list['str']) -> [[str]]:
     n = len(events)
     matrix = [['#' for j in range(n)] for i in range(n)]
     _fill_matrix_with_causalities(matrix,events,log)
@@ -61,9 +53,6 @@ def _fill_matrix_with_inverse_causalities_parallelism(matrix: [[str]]) -> None:
     
 
 def _get_all_causalities(log: set[tuple[str]]) -> {} :
-
-    _validate_log(log)
-
     causalities = defaultdict(set)
     for trace in log:
         n = len(trace)
