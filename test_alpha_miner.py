@@ -1,5 +1,6 @@
 import pytest
-from alpha_miner import (define_all_events,
+from alpha_miner import (alpha,
+    define_all_events,
     define_all_possible_end_events,
     define_all_possible_start_events,
     _get_all_successions,
@@ -89,13 +90,14 @@ LOG_PARALLEL = {('a', 'b', 'c', 'd'), ('a', 'c', 'b', 'd')}
     ]),
 ])
 def test_footprint_matrix(log, expected):
-    assert _footprint_matrix(log) == expected
+    events = sorted(define_all_events(log))
+    assert _footprint_matrix(log, events) == expected
 
 @pytest.mark.parametrize("invalid_log", [
     None,
     set(),
     {()},
 ])
-def test_footprint_matrix_for_invalid_input(invalid_log):
+def test_alpha_for_invalid_input(invalid_log):
     with pytest.raises(ValueError):
-        _footprint_matrix(invalid_log)
+        alpha(invalid_log)
