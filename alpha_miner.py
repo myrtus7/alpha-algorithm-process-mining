@@ -27,17 +27,17 @@ def define_all_possible_end_events(log: set[tuple[str]]) -> set[str] :
 def _footprint_matrix(log: set[tuple[str]], events: list['str']) -> [[str]]:
     n = len(events)
     matrix = [['#' for j in range(n)] for i in range(n)]
-    _fill_matrix_with_causalities(matrix,events,log)
+    _fill_matrix_with_successions(matrix,events,log)
     _fill_matrix_with_inverse_causalities_parallelism(matrix)
     return matrix
         
 
-def _fill_matrix_with_causalities(matrix: [[str]], events:list[str], log: set[tuple[str]]) -> None :
-    causalities = _get_all_causalities(log)
+def _fill_matrix_with_successions(matrix: [[str]], events:list[str], log: set[tuple[str]]) -> None :
+    successions = _get_all_successions(log)
     n = len(matrix)
     for i in range(n):
         for j in range(n):
-            if j != i and events[j] in causalities[events[i]]:
+            if j != i and events[j] in successions[events[i]]:
                 matrix[i][j] = '->'
 
 
@@ -52,14 +52,14 @@ def _fill_matrix_with_inverse_causalities_parallelism(matrix: [[str]]) -> None:
                     matrix[j][i] = '<-'
     
 
-def _get_all_causalities(log: set[tuple[str]]) -> {} :
-    causalities = defaultdict(set)
+def _get_all_successions(log: set[tuple[str]]) -> {} :
+    successions = defaultdict(set)
     for trace in log:
         n = len(trace)
         for i in range(n-1):
-            causalities[trace[i]].add(trace[i+1])
+            successions[trace[i]].add(trace[i+1])
 
-    return causalities
+    return successions
 
 def _validate_log(log: set[tuple[str]]) -> None:
     if not log or any(len(trace) == 0 for trace in log):

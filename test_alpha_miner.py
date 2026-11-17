@@ -2,7 +2,7 @@ import pytest
 from alpha_miner import (define_all_events,
     define_all_possible_end_events,
     define_all_possible_start_events,
-    _get_all_causalities,
+    _get_all_successions,
     _footprint_matrix)
 
 LOG = {
@@ -53,8 +53,8 @@ def test_define_all_possible_end_events(log, expected):
     ({('a',)}, {}),
     ({('a',), ('a', 'b')}, {'a':{'b'}}),
 ])
-def test_get_all_causalities(log, expected):
-    assert _get_all_causalities(log) == expected
+def test_get_all_successions(log, expected):
+    assert _get_all_successions(log) == expected
 
 LOG_PARALLEL = {('a', 'b', 'c', 'd'), ('a', 'c', 'b', 'd')}
 
